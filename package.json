@@ -1,0 +1,33 @@
+{
+  "name": "agentx-js",
+  "version": "0.4.0",
+  "description": "Official JavaScript/TypeScript SDK for AgentX (https://www.agentx.so/)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["agentx", "ai", "agents", "workforce", "sdk"],
+  "author": "AgentX Team",
+  "author_email": "contact@agentx.so",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AgentX-ai/agentx-js"
+  },
+  "homepage": "https://www.agentx.so/",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
