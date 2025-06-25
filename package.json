@@ -1,5 +1,5 @@
 {
-  "name": "agentx-js",
+  "name": "@agentx-ai/agentx-js",
   "version": "0.4.0",
   "description": "Official JavaScript/TypeScript SDK for AgentX (https://www.agentx.so/)",
   "main": "dist/index.js",
