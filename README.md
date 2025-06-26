@@ -1,6 +1,6 @@
 ![Logo](https://agentx-resources.s3.us-west-1.amazonaws.com/AgentX-logo-387x60.png)
 
-[![npm version](https://img.shields.io/npm/v/agentx-js)](https://www.npmjs.com/package/@agentx-ai/agentx-js)
+[![npm version](https://img.shields.io/npm/v/@agentx-ai/agentx-js)](https://www.npmjs.com/package/@agentx-ai/agentx-js)
 
 ---
 
