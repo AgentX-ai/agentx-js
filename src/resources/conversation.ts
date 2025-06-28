@@ -31,6 +31,11 @@ export interface ConversationData {
   updatedAt?: string;
 }
 
+export interface ContextMessage {
+  user?: string;
+  assistant?: string;
+}
+
 // Helper function to count characters in a string
 function countChar(str: string, char: string): number {
   return (
@@ -56,25 +61,6 @@ export class Conversation {
     this.agents = data.agents;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
-  }
-
-  async newConversation(): Promise<Conversation> {
-    const url = `https://api.agentx.so/api/v1/access/agents/${this.agent_id}/conversations/new`;
-    const response: AxiosResponse = await axios.post(
-      url,
-      { type: "chat" },
-      { headers: getHeaders() }
-    );
-
-    if (response.status === 200) {
-      const newConv = response.data;
-      newConv.agent_id = this.agent_id;
-      return new Conversation(newConv);
-    } else {
-      throw new Error(
-        `Failed to create new conversation: ${response.status} - ${response.statusText}`
-      );
-    }
   }
 
   async listMessages(): Promise<Message[]> {
@@ -114,6 +100,36 @@ export class Conversation {
       { headers: getHeaders() }
     );
     return response.data;
+  }
+
+  async updateContext(messages: ContextMessage[]): Promise<void> {
+    const url = `https://api.agentx.so/api/v1/access/conversations/${this.id}/update-context`;
+    const response: AxiosResponse = await axios.put(
+      url,
+      { messages },
+      { headers: getHeaders() }
+    );
+
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to update conversation context: ${response.status} - ${response.statusText}`
+      );
+    }
+  }
+
+  async updateUserContext(message: string): Promise<void> {
+    const url = `https://api.agentx.so/api/v1/access/conversations/${this.id}/update-user-context`;
+    const response: AxiosResponse = await axios.put(
+      url,
+      { message },
+      { headers: getHeaders() }
+    );
+
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to update user context: ${response.status} - ${response.statusText}`
+      );
+    }
   }
 
   async *chatStream(
