@@ -25,6 +25,26 @@ export class Agent {
     this.updatedAt = data.updatedAt;
   }
 
+  async newConversation(): Promise<Conversation> {
+    const url = `https://api.agentx.so/api/v1/access/agents/${this.id}/conversations/new`;
+    const response: AxiosResponse = await axios.post(
+      url,
+      { type: "chat" },
+      { headers: getHeaders() }
+    );
+
+    if (response.status === 200) {
+      const newConv = response.data;
+      newConv.id = newConv._id;
+      newConv.agent_id = this.id;
+      return new Conversation(newConv);
+    } else {
+      throw new Error(
+        `Failed to create new conversation: ${response.status} - ${response.statusText}`
+      );
+    }
+  }
+
   async getConversation(id: string): Promise<Conversation> {
     const conversations = await this.listConversations();
     const conversation = conversations.find((conv) => conv.id === id);
