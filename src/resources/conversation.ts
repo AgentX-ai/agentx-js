@@ -36,14 +36,6 @@ export interface ContextMessage {
   assistant?: string;
 }
 
-// Helper function to count characters in a string
-function countChar(str: string, char: string): number {
-  return (
-    str.match(new RegExp(char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ||
-    []
-  ).length;
-}
-
 export class Conversation {
   public agent_id: string;
   public id: string;
@@ -141,36 +133,94 @@ export class Conversation {
       url,
       { message, context },
       {
-        headers: getHeaders(),
+        headers: {
+          ...getHeaders(),
+          accept: "text/event-stream",
+        },
         responseType: "stream",
       }
     );
 
     if (response.status === 200) {
-      let result = "";
+      let buffer = "";
       const stream = response.data;
 
       for await (const chunk of stream) {
         const chunkStr = chunk.toString();
-        result += chunkStr;
+        buffer += chunkStr;
 
-        try {
-          if (countChar(result, "{") === countChar(result, "}")) {
-            const catchJson = JSON.parse(result);
-            if (catchJson) {
-              result = "";
-              yield {
-                text: catchJson.text || null,
-                cot: catchJson.cot || null,
-                botId: catchJson.botId,
-                reference: catchJson.reference,
-                tasks: catchJson.tasks,
-              };
+        // Process complete JSON objects from the buffer
+        let braceCount = 0;
+        let startIndex = -1;
+        let processedLength = 0;
+
+        for (let i = 0; i < buffer.length; i++) {
+          if (buffer[i] === "{") {
+            if (braceCount === 0) {
+              startIndex = i;
+            }
+            braceCount++;
+          } else if (buffer[i] === "}") {
+            braceCount--;
+            if (braceCount === 0 && startIndex !== -1) {
+              // We have a complete JSON object
+              const jsonStr = buffer.substring(startIndex, i + 1);
+
+              try {
+                const parsedJson = JSON.parse(jsonStr);
+
+                // Only yield if this is a meaningful response (has text, cot, or other relevant data)
+                if (
+                  parsedJson.text !== undefined ||
+                  parsedJson.cot !== undefined ||
+                  parsedJson.tasks !== undefined
+                ) {
+                  yield {
+                    text: parsedJson.text || null,
+                    cot: parsedJson.cot || null,
+                    botId: parsedJson.botId,
+                    reference: parsedJson.reference,
+                    tasks: parsedJson.tasks,
+                  };
+                }
+
+                // Track the processed length
+                processedLength = i + 1;
+                startIndex = -1;
+              } catch (jsonError) {
+                // If JSON parsing fails, continue looking for valid JSON
+                continue;
+              }
             }
           }
+        }
+
+        // Remove processed JSON from buffer
+        if (processedLength > 0) {
+          buffer = buffer.substring(processedLength);
+        }
+      }
+
+      // Handle any remaining data in buffer
+      if (buffer.trim()) {
+        try {
+          const remainingJson = JSON.parse(buffer.trim());
+          if (
+            remainingJson.text !== undefined ||
+            remainingJson.cot !== undefined ||
+            remainingJson.tasks !== undefined
+          ) {
+            yield {
+              text: remainingJson.text || null,
+              cot: remainingJson.cot || null,
+              botId: remainingJson.botId,
+              reference: remainingJson.reference,
+              tasks: remainingJson.tasks,
+            };
+          }
         } catch (jsonError) {
-          // Continue if JSON parsing fails
-          continue;
+          // If final parsing fails, ignore the remaining buffer
+          console.warn("Failed to parse remaining buffer:", buffer);
         }
       }
     } else {

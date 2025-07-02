@@ -1,6 +1,6 @@
 {
   "name": "@agentx-ai/agentx-js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Official JavaScript/TypeScript SDK for AgentX (https://www.agentx.so/)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["agentx", "ai", "agents", "workforce", "sdk"],
+  "keywords": [
+    "agentx",
+    "ai",
+    "agents",
+    "workforce",
+    "sdk"
+  ],
   "author": "AgentX Team",
   "author_email": "contact@agentx.so",
   "license": "MIT",
