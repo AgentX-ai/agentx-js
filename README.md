@@ -23,7 +23,7 @@ Why build AI agent with AgentX?
 ## Installation
 
 ```bash
-npm install agentx-js
+npm install @agentx-ai/agentx-js
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ You can get an API key from https://app.agentx.so
 ### Agent
 
 ```typescript
-import { AgentX } from 'agentx-js';
+import { AgentX } from '@agentx-ai/agentx-js';
 
 const client = new AgentX(apiKey: "<your api key here>");
 
@@ -99,7 +99,7 @@ output looks like:
 A Workforce (team) consists of multiple agents working together with a designated manager agent.
 
 ```typescript
-import { AgentX } from 'agentx-js';
+import { AgentX } from '@agentx-ai/agentx-js';
 
 const client = new AgentX(apiKey: "<your api key here>");
 
