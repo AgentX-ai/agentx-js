@@ -62,8 +62,8 @@ jobs:
           echo "export const VERSION = \"$NEW_VERSION\";" > src/version.ts
           
           # Commit and push changes
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add package.json src/version.ts
           git commit -m "Bump version to $NEW_VERSION [skip ci]"
           git push
