@@ -245,6 +245,39 @@ try {
 
 - `AGENTX_API_KEY` - Your AgentX API key (optional if passed to constructor)
 
+## Automated Publishing
+
+This package uses GitHub Actions for automated publishing to npm. The workflow automatically:
+
+1. **Checks for version changes**: If `src/version.ts` is manually modified, it uses that version
+2. **Auto-bumps version**: If `src/version.ts` hasn't changed, it automatically bumps the patch version by 0.0.1
+3. **Builds and publishes**: Compiles TypeScript and publishes to npm
+4. **Creates releases**: Creates GitHub releases for manual version changes
+
+### Setup Required
+
+To enable automated publishing, you need to set up the following secrets in your GitHub repository:
+
+1. **NPM_TOKEN**: Your npm authentication token
+
+   - Go to npmjs.com → Account → Access Tokens
+   - Create a new token with "Automation" type
+   - Add it as a repository secret named `NPM_TOKEN`
+
+2. **GITHUB_TOKEN**: This is automatically provided by GitHub Actions
+
+### How It Works
+
+- **Manual version bump**: Edit `src/version.ts` and push to main → triggers publish with your version
+- **Automatic version bump**: Push any changes to main without touching `src/version.ts` → automatically bumps patch version and publishes
+- **Manual trigger**: You can also manually trigger the workflow from the GitHub Actions tab
+
+### Version Management
+
+- The workflow reads the version from `package.json` and `src/version.ts`
+- When auto-bumping, it updates both files and commits the changes
+- The `[skip ci]` tag in commit messages prevents infinite loops
+
 ## License
 
 MIT License
